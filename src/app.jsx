@@ -1,11 +1,13 @@
 import * as React from 'react'
-import * as Server from 'react-dom/server'
+import ReactDOM from "react-dom"
 import { GameComponent } from "gokart.js/src/core/ui_components/GameComponent.jsx"
 import { HUDView } from "gokart.js/src/core/ui_components/HUDView.jsx"
 import { MobileStick } from "gokart.js/src/core/ui_components/MobileStick.jsx"
 import { Physics3dScene } from "gokart.js/src/scene/physics3d"
 import { CameraComponent,  ModelComponent, LightComponent  } from "gokart.js/src/core/components/render"
 import { BodyComponent } from "gokart.js/src/core/components/physics"
+import { Vector3 } from "gokart.js/src/core/ecs_types"
+import { LocRotComponent } from "gokart.js/src/core/components/position"
 
 class TestScene extends Physics3dScene {
     init_entities(){
@@ -30,7 +32,13 @@ class TestScene extends Physics3dScene {
 
         const c = this.world.createEntity()
         c.addComponent(CameraComponent,{lookAt: new Vector3(0,0,1),current: true, fov:60})
-        c.addComponent(LocRotComponent,{location: new Vector3(10,50,-50)})
+        c.addComponent(LocRotComponent,{location: new Vector3(5,20,-20)})
+
+        const box = this.world.createEntity()
+        box.addComponent(ModelComponent,{})
+        box.addComponent(LocRotComponent,{location: new Vector3(0,10,0),rotation: new Vector3(0,Math.PI/4,Math.PI/4)})
+        box.addComponent(BodyComponent,{mass:1,bounds_type:BodyComponent.BOX_TYPE,bounds: new Vector3(1,1,1)})
+        box.name = "box"
     }
 }
 
@@ -88,8 +96,7 @@ class Game extends React.Component {
                         <HUDView hudState={hudState}>
                 	    {hudState => (
                             <div className="overlay">
-                        		<h1>Web Game Starter - Test</h1>
-                        		<p>This is an example from the <a href="https://github.com/nikolajbaer/web-game-starter">web game starter kit</a>. WASD to move.</p>
+                        		<h1>Example</h1>
                                 <p>{hudState?hudState.fps.toFixed(1):"-"} fps</p>
                                 <p><input type="checkbox" checked={this.state.fullscreen} onChange={this.handleFullscreen} /> Fullscreen</p>
 
@@ -108,7 +115,7 @@ class Game extends React.Component {
         }else{
             return (
                 <div className="menu">
-                    <h1>🏎️ GoKart.js Test</h1> 
+                    <h1>🏎️ GoKart.js Import Test</h1> 
                     <p><a href="https://github.com/nikolajbaer/gokart.js">github</a></p>
                     <button onClick={() => this.startLoading()}>Load Scene Test</button>
                 </div>
@@ -116,4 +123,4 @@ class Game extends React.Component {
         }
     }
 }
-console.log(Server.renderToString(<Game />))
+ReactDOM.render( <Game />, document.getElementById("app"))
